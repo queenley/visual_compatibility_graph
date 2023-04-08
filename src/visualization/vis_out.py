@@ -166,7 +166,6 @@ def test_fitb(_args):
 
 
 if __name__ == "__main__":
-commit    # TODO: remove unnecessary arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("-k", type=int, default=1,
                         help="K used for the variable number of edges case")
