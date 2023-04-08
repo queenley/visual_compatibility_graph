@@ -1,0 +1,9 @@
+sentence-transformers==2.2.2
+gdown==4.6.0
+tensorflow-gpu==2.10.0
+numpy~=1.23.5
+scipy~=1.9.3
+argparse~=1.4.0
+pandas~=1.5.3
+tqdm~=4.64.1
+scikit-image~=0.19.3
