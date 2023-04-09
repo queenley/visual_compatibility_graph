@@ -2,7 +2,7 @@ import json
 
 
 def get_compats(resampled=False):
-    dataset_path = '../jsons/'
+    dataset_path = '../../../../data/polyvore/jsons'
 
     #################
     #### MAP IDS ####

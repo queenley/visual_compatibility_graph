@@ -2,22 +2,16 @@ import numpy as np
 import scipy.sparse as sp
 import json
 import time
+import os
 
-from src.utils.utils import Graph
 from .Dataloader import Dataloader
-
 
 class DataLoaderPolyvore(Dataloader):
     """
     Load polyvore data.
     """
-
     def __init__(self):
-        super(DataLoaderPolyvore, self).__init__(path='data/polyvore/dataset/')
-        self.comp_outfits = None
-        self.test_adj = None
-        self.questions_resampled = None
-        self.questions = None
+        super(DataLoaderPolyvore, self).__init__(path='src/data/polyvore/dataset/')
 
     def init_phase(self, phase):
         print('init phase: {}'.format(phase))
@@ -47,6 +41,7 @@ class DataLoaderPolyvore(Dataloader):
         assert phase in ['train', 'valid', 'test']
 
         lower_adj = getattr(self, 'lower_{}_adj'.format(phase))
+        # get the positive edges
 
         # get the positive edges
 

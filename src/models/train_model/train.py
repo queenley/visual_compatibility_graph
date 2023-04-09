@@ -8,6 +8,9 @@ import numpy as np
 import json
 import os
 
+import sys 
+sys.path.append("./")
+
 from src.utils.utils import sparse_to_tuple, get_degree_supports, normalize_nonsym_adj, \
                             construct_feed_dict, write_log, support_dropout
 from src.models.gnn.CompatibilityGAE import CompatibilityGAE
@@ -149,7 +152,7 @@ if __name__ == "__main__":
                              learning_rate=LR,
                              logging=True,
                              batch_norm=BATCH_NORM,
-                             optimizer=args["op"],
+                             optimizer=args["optimizer"],
                              wd=args['weight_decay'])
 
     # Feed_dicts for validation and test set stay constant over different update steps
