@@ -8,6 +8,9 @@ import numpy as np
 import json
 import os
 
+import sys 
+sys.path.append("./")
+
 from src.utils.utils import sparse_to_tuple, get_degree_supports, normalize_nonsym_adj, \
                             construct_feed_dict, write_log, support_dropout
 from src.models.gnn.CompatibilityGAE import CompatibilityGAE
