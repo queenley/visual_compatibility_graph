@@ -56,7 +56,7 @@ def process_text(txt):
     return sbert_model.encode([txt])[0]
 
 
-dataset_path = '..'
+dataset_path = '../../../../data/polyvore/'
 images_path = dataset_path + '/images/'
 json_file = os.path.join(dataset_path, 'jsons/{}_no_dup.json'.format(args.phase))
 with open(json_file) as f:

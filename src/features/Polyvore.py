@@ -2,6 +2,7 @@ import numpy as np
 import scipy.sparse as sp
 import json
 import time
+import os
 
 from .Dataloader import Dataloader
 
@@ -10,10 +11,7 @@ class DataLoaderPolyvore(Dataloader):
     Load polyvore data.
     """
     def __init__(self):
-        super(DataLoaderPolyvore, self).__init__(path='data/polyvore/dataset/')
-        self.comp_outfits = None
-        self.questions_resampled = None
-        self.questions = None
+        super(DataLoaderPolyvore, self).__init__(path='src/data/polyvore/dataset/')
 
     def init_phase(self, phase):
         print('init phase: {}'.format(phase))
@@ -43,9 +41,7 @@ class DataLoaderPolyvore(Dataloader):
         assert phase in ['train', 'valid', 'test']
 
         lower_adj = getattr(self, 'lower_{}_adj'.format(phase))
-
         # get the positive edges
-
         pos_r_idx, pos_c_idx = lower_adj.nonzero()
         pos_labels = np.array(lower_adj[pos_r_idx, pos_c_idx]).squeeze()
 
@@ -60,7 +56,6 @@ class DataLoaderPolyvore(Dataloader):
         eval_pos_labels, eval_pos_r_idx, eval_pos_c_idx = pos_labels[:n_eval], pos_r_idx[:n_eval], pos_c_idx[:n_eval]
 
         # get the negative edges
-
         print('Sampling negative edges...')
         before = time.time()
         n_train_neg = eval_pos_labels.shape[0] # set the number of negative training edges that will be needed to sample at each iter
@@ -170,8 +165,7 @@ class DataLoaderPolyvore(Dataloader):
             K: number of edges to expand for each question node
             subset: if true, use only a subset of the outfit as the query, and
                     use the rest as links to the choices.
-            expand_outfit: the mode to expand outfit
-
+            expand_outfit: the mode to expand_outfit
         Returns:
             yields questions
         """

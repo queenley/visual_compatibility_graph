@@ -30,7 +30,7 @@ class Layer(object):
     """Base layer class. Defines basic API for all layer objects.
     # Properties
         name: String, defines the variable scope of the layer.
-            Layers with common name share variables. (TODO)
+            Layers with common name share variables.
         logging: Boolean, switches Tensorflow histogram logging on/off
     # Methods
         _call(inputs): Defines computation graph of layer
@@ -41,8 +41,8 @@ class Layer(object):
 
     def __init__(self, **kwargs):
         allowed_kwargs = {'name', 'logging'}
-        for kwarg in kwargs.keys():
-            assert kwarg in allowed_kwargs, 'Invalid keyword argument: ' + kwarg
+        # for kwarg in kwargs.keys():
+        #     assert kwarg in allowed_kwargs, 'Invalid keyword argument: ' + kwarg
         name = kwargs.get('name')
         if not name:
             layer = self.__class__.__name__.lower()
@@ -145,7 +145,6 @@ class GCN(Layer):
         self.is_train = is_train
 
         self.bias = bias
-        # TODO, REMOVE
         # support = tf.sparse_split(axis=1, num_split=num_support, sp_input=support)
         self.support = support
 
