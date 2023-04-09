@@ -3,6 +3,9 @@ import scipy.sparse as sp
 import json
 import time
 
+import sys 
+sys.path.append("/content/visual_compatibility_graph")
+
 from .Dataloader import Dataloader
 
 class DataLoaderPolyvore(Dataloader):
