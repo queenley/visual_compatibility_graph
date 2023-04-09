@@ -18,9 +18,9 @@ In our experiments, we just use the Polyvore dataset, because We cannot find the
 ### [Polyvore dataset](https://github.com/xthan/polyvore-dataset):
 Please download full dataset in this [link](https://drive.google.com/drive/folders/1splSxGhduNFZXLb518BusnEwqphyABeK?usp=sharing)
 
-The dataset after downloaded have to pushed in `data/polyvore`
+The dataset after downloaded have to pushed in `src/data/polyvore`
 
-When all files are downloaded, run `./process_polyvore.sh` in `data/polyvore/`which will extract image features and create the necessary files.
+When all files are downloaded, create an empty folder `dataset` and run `./process_polyvore.sh` in `src/data/polyvore/`which will extract image features and create the necessary files.
 
 
 ## Training
