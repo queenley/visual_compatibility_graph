@@ -12,8 +12,8 @@ FLAGS = flags.FLAGS
 class Model(object):
     def __init__(self, **kwargs):
         allowed_kwargs = {'name', 'logging', 'wd'}
-        for kwarg in kwargs.keys():
-            assert kwarg in allowed_kwargs, 'Invalid keyword argument: ' + kwarg
+        # for kwarg in kwargs.keys():
+            # assert kwarg in allowed_kwargs, 'Invalid keyword argument: ' + kwarg
 
         name = kwargs.get('name')
         if not name:
