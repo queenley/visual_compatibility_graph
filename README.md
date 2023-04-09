@@ -2,7 +2,7 @@
 # Context-Aware Visual Compatibility Prediction
 
 <div align="center">
-  <img src="main_fig.png" width="400" />
+  <img src="docs/main_fig.png" width="400" />
 </div>
 
 In this repository we provide the implementation for the paper [Context-Aware Visual Compatibility Prediction](https://arxiv.org/abs/1902.03646). We propose a method that predicts compatibility between two items based on their visual features, as well as their context. We define context as the products that are known to be compatible with each of these items. Our model is in contrast to other metric learning approaches that rely on pairwise comparisons between item features alone. We address the compatibility prediction problem using a graph neural network that learns to generate product embeddings conditioned on their context. 
