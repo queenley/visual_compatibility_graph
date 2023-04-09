@@ -33,7 +33,8 @@ The most relevant arguments are the following:
  - `-lr LR`: Learning rate. `0.001` by  default.
  - `-hi N N N`: One argument per layer that defines the number of hidden units in that layer. Default: `-hi 350 350 350`
  - `-deg D`: Size of the neighbourhood used around each node. Default `1`.
-
+ - `-op OP`: Optimizer to train model. Default `adam`.
+ 
 ### For our experiment 1, to train a model like the one described in the paper for the Polyvore dataset, run:
 ```shell
 python train.py -hi 350
