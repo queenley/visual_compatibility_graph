@@ -30,11 +30,10 @@ When all files are downloaded, run:
 bash src/data/polyvore/process_polyvore.sh
 ```
 
-
 ## Training
 The model is trained with the following command:
 
-    python train.py
+    python src/models/train_model/train.py
 
 The most relevant arguments are the following:
 
@@ -45,30 +44,30 @@ The most relevant arguments are the following:
  
 ### For our experiment 1, to train a model like the one described in the paper for the Polyvore dataset, run:
 ```shell
-python train.py -hi 350
+python src/models/train_model/train.py -hi 350
 ```
 AND 
 ```shell
-python train.py -hi 350 350 350 350 350
+python src/models/train_model/train.py -hi 350 350 350 350 350
 ```
 ### For our experiment 2, to train a model like the one described in the paper for the Polyvore dataset, run:
 ```shell
-python train.py -op "sgd"
+python src/models/train_model/train.py -op "sgd"
 ```
 ### For our experiment 3, to train a model like the one described in the paper for the Polyvore dataset, run:
 ```shell
-python train.py -deg 3
+python src/models/train_model/train.py -deg 3
 ```
 ### For our experiment 4, write the result with the full dataset for possible item choices
 Please checkout out to branch `dev.full`, and run:
 ```shell
-python vis_out.py --load_from <path_of_model> --result <path_of_result>
+python src/visualization/vis_out.py --load_from <path_of_model> --result <path_of_result>
 ```
 You can see the result I run [here](https://drive.google.com/drive/folders/1f5OXl8zjFqCO56W_g2BaRPgh8RiAl6Jp?usp=sharing)
 ### For our experiment 5, write the result with the full dataset for possible item choices (filter category)
 Please checkout out to branch `dev.cat`, and run:
 ```shell
-python vis_out.py --load_from <path_of_model> --result <path_of_result>
+python src/visualization/vis_out.py --load_from <path_of_model> --result <path_of_result>
 ```
 You can see the result I run [here](https://drive.google.com/drive/folders/1-XcDoKXIm91KlkwWhLQJ6kVFFbcQOlyT?usp=sharing)
 
@@ -79,11 +78,11 @@ Which will store the log and the weights of the model in `logs/`.
 A model trained on Polyvore or FashionGen can be evaluated for the FITB task and the Compatibility prediction task.
 Evaluation for the FITB task is performed with:
 
-    python test_fitb.py -lf PATH_TO_MODEL -k K
+    python src/evaluate/test_fitb.py -lf PATH_TO_MODEL -k K
 
 and for the compatibility task with:
 
-    python test_compatibility.py -lf PATH_TO_MODEL -k K
+    python src/evaluate/test_compatibility.py -lf PATH_TO_MODEL -k K
 
 In both cases, K is the maximum number of neighbours used around a node. For Polyvore, the flag `--resampled` can be set to use the resampled version of the task, which is harder.
 
