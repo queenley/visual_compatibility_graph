@@ -4,7 +4,7 @@ import json
 import time
 
 import sys 
-sys.path.append("/content/visual_compatibility_graph")
+sys.path.append("visual_compatibility_graph")
 
 from .Dataloader import Dataloader
 
@@ -13,7 +13,7 @@ class DataLoaderPolyvore(Dataloader):
     Load polyvore data.
     """
     def __init__(self):
-        super(DataLoaderPolyvore, self).__init__(path='data/polyvore/dataset/')
+        super(DataLoaderPolyvore, self).__init__(path='src/data/polyvore/dataset/')
         self.questions = None
         self.questions_resampled = None
         self.comp_outfits = None
