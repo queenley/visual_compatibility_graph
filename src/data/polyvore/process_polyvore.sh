@@ -15,7 +15,7 @@ create_dataset(){
 }
 
 # extract img features
-cd utils
+cd src/data/polyvore/utils
 extract_features "valid"
 extract_features "train"
 extract_features "test"
