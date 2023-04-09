@@ -3,8 +3,6 @@ import scipy.sparse as sp
 import json
 import time
 
-import sys 
-sys.path.append("visual_compatibility_graph")
 
 from .Dataloader import Dataloader
 
