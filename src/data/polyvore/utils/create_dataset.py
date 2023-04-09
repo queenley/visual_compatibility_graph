@@ -84,14 +84,19 @@ features_mat = np.zeros((idx, 2816))
 print('Filling the values of the sparse adj matrix')
 for rel in relations:
     rel_list = relations[rel]
-    from_idx = id2idx[rel]
+    try:
+        from_idx = id2idx[rel]
+    except: 
+        print(rel)
     features_mat[from_idx] = features[from_idx]
 
     for related in rel_list:
-        to_idx = id2idx[related]
-
+        try:
+            to_idx = id2idx[related]
+        except: 
+            print(related)
         sp_adj[from_idx, to_idx] = 1
-        sp_adj[to_idx, from_idx] = 1  # because it is symmetric
+        sp_adj[to_idx, from_idx] = 1  # because it is symmetric        
 
 print('Done!')
 
