@@ -2,7 +2,7 @@ import numpy as np
 import scipy.sparse as sp
 import json
 import time
-
+import os
 
 from .Dataloader import Dataloader
 
@@ -12,9 +12,6 @@ class DataLoaderPolyvore(Dataloader):
     """
     def __init__(self):
         super(DataLoaderPolyvore, self).__init__(path='src/data/polyvore/dataset/')
-        self.questions = None
-        self.questions_resampled = None
-        self.comp_outfits = None
 
     def init_phase(self, phase):
         print('init phase: {}'.format(phase))
