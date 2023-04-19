@@ -82,7 +82,7 @@ with open(map_file, 'w') as f:
 
 # create sparse matrix that will represent the adj matrix
 sp_adj = lil_matrix((idx, idx))
-features_mat = np.zeros((idx, 2048))
+features_mat = np.zeros((idx, 2816))
 print('Filling the values of the sparse adj matrix')
 for rel in relations:
     rel_list = relations[rel]
