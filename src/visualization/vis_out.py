@@ -10,6 +10,8 @@ from skimage.color import gray2rgb, rgba2rgb
 import skimage.io
 from collections import namedtuple
 import os
+import sys
+sys.path.append("./")
 from tqdm import tqdm
 
 import tensorflow.compat.v1 as tf
