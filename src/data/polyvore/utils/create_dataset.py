@@ -70,7 +70,6 @@ for outfit in json_data:
             except:
                 print(id)
                 continue
-
         relations[id].update(outfit_ids)
         relations[id].remove(id)
         
