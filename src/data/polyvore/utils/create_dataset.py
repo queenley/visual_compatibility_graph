@@ -90,10 +90,13 @@ for rel in relations:
     features_mat[from_idx] = features[from_idx]
 
     for related in rel_list:
-        to_idx = id2idx[related]
+        try:
+            to_idx = id2idx[related]
 
-        sp_adj[from_idx, to_idx] = 1
-        sp_adj[to_idx, from_idx] = 1 # because it is symmetric
+            sp_adj[from_idx, to_idx] = 1
+            sp_adj[to_idx, from_idx] = 1 # because it is symmetric
+        except:
+            continue
 
 print('Done!')
 
