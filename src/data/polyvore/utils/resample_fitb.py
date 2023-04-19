@@ -8,7 +8,7 @@ import random
 
 
 def resample_fitb():
-    dataset_path = '../../../../data/polyvore/jsons'
+    dataset_path = '../../../../data/polyvore/jsons/'
     questions_file = dataset_path + 'fill_in_blank_test.json'
     json_file = dataset_path + '{}_no_dup.json'.format('test')
     questions_file_resampled = dataset_path + 'fill_in_blank_test_RESAMPLED.json'
