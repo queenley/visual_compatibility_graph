@@ -22,7 +22,7 @@ save_path = '../dataset/'
 if not os.path.exists(save_path):
     os.makedirs(save_path)
     
-dataset_path = '../../../../data/polyvore/jsons'
+dataset_path = '../../../../data/polyvore/jsons/'
 json_file = dataset_path + '{}_no_dup.json'.format(args.phase)
 train_file = dataset_path + 'train_no_dup.json'
 valid_file = dataset_path + 'valid_no_dup.json'
