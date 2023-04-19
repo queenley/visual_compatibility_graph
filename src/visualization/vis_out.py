@@ -31,10 +31,10 @@ def test_fitb(_args):
     with open(config_file) as f:
         config = json.load(f)
 
-    with open('./src/data/polyvore/dataset/id2idx_test.json') as f:
+    with open('src/data/polyvore/dataset/id2idx_test.json') as f:
         id2idx_test = json.load(f)
 
-    with open('./src/data/polyvore/dataset/id2their_test.json') as f:
+    with open('src/data/polyvore/dataset/id2their_test.json') as f:
         id2their_test = json.load(f)
 
     NUMCLASSES = 2
@@ -99,7 +99,7 @@ def test_fitb(_args):
 
     def save_image(_id):
         outfit_id, index = _id.split('_')  # outfitID_index
-        images_path = './data/polyvore/images/'
+        images_path = 'data/polyvore/images/'
         image_path = images_path + outfit_id + '/' + '{}.jpg'.format(index)
         _im = None
         if os.path.exists(image_path):
