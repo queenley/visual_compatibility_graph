@@ -12,6 +12,7 @@ from collections import namedtuple
 import os
 import sys
 sys.path.append("./")
+print(os.getcwd())
 from tqdm import tqdm
 
 import tensorflow.compat.v1 as tf
