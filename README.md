@@ -96,7 +96,3 @@ Please cite our paper as:
       month = {June},
       year = {2019}
     }
-
-
-## License
-`MIT`
