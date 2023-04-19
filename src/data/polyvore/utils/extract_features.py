@@ -8,6 +8,7 @@ from torchvision import models
 import torchvision.transforms as transforms
 
 import os
+print(os.getcwd())
 import argparse
 from skimage.transform import resize
 from skimage import img_as_ubyte
