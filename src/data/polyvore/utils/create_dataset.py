@@ -56,8 +56,8 @@ for outfit in json_data:
         #cat_dict[id] = item['categoryid']
         map_id2their[id] = '{}_{}'.format(outfit['set_id'], item['index'])
     for id in outfit_ids:
-        if id not in relations:
-            try:    
+        try:
+            if id not in relations:
                 relations[id] = set()
                 img_feats = feat_dict[str(id)] 
                 # TODO, REMOVE
@@ -67,17 +67,11 @@ for outfit in json_data:
                 # map this id to a sequential index
                 id2idx[id] = idx
                 idx += 1
-            except:
-                print(id)
-                continue
-        relations[id].update(outfit_ids)
-        relations[id].remove(id)
-        
 
-        relations[id].update(outfit_ids)
-        relations[id].remove(id)
+            relations[id].update(outfit_ids)
+            relations[id].remove(id)
         except:
-            print(id)
+            print(id) 
 
 map_file = save_path + 'id2idx_{}.json'.format(args.phase)
 with open(map_file, 'w') as f:
