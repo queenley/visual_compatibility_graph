@@ -55,23 +55,30 @@ for outfit in json_data:
         outfit_ids.add(id)
         #cat_dict[id] = item['categoryid']
         map_id2their[id] = '{}_{}'.format(outfit['set_id'], item['index'])
-
     for id in outfit_ids:
-        try:
-            relations[id] = set()
-            img_feats = feat_dict[str(id)] 
-            # TODO, REMOVE
-            #cat_vector = cat_vectors[cat_dict[id]]
-            #feats = np.concatenate((cat_vector, img_feats))
-            features.append(img_feats)
-            # map this id to a sequential index
-            id2idx[id] = idx
-            idx += 1
-        except:
-            print(id)
+        if id not in relations:
+            try:    
+                relations[id] = set()
+                img_feats = feat_dict[str(id)] 
+                # TODO, REMOVE
+                #cat_vector = cat_vectors[cat_dict[id]]
+                #feats = np.concatenate((cat_vector, img_feats))
+                features.append(img_feats)
+                # map this id to a sequential index
+                id2idx[id] = idx
+                idx += 1
+            except:
+                print(id)
+                continue
 
         relations[id].update(outfit_ids)
         relations[id].remove(id)
+        
+
+        relations[id].update(outfit_ids)
+        relations[id].remove(id)
+        except:
+            print(id)
 
 map_file = save_path + 'id2idx_{}.json'.format(args.phase)
 with open(map_file, 'w') as f:
