@@ -82,7 +82,6 @@ def test_fitb(_args):
                              num_support=num_support,
                              hidden=config['hidden'],
                              learning_rate=config['learning_rate'],
-                             logging=True,
                              batch_norm=config['batch_norm'])
 
     # Add ops to save and restore all the variables.
