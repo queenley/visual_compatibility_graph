@@ -72,7 +72,7 @@ class DataLoaderPolyvore(Dataloader):
         neg_c_idx = np.zeros(n_train_neg)
 
         for i in range(n_train_neg):
-            r_idx, c_idx = self.get_negative_training_edge(poss_nodes, poss_nodes.shape[0])
+            r_idx, c_idx = self.get_negative_training_edge(poss_nodes.shape[0], lower_adj)
             neg_r_idx[i] = r_idx
             neg_c_idx[i] = c_idx
         print('Sampling done, time elapsed: {}'.format(time.time() - before))
