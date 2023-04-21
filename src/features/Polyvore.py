@@ -171,7 +171,7 @@ class DataLoaderPolyvore(Dataloader):
             yields questions
         """
         assert K >= 0
-        cat_clus_path = f"{self.path_dataset}/../jsons/cat/idx2clus.json"
+        cat_clus_path = f"{self.path_dataset}../../../../data/polyvore/jsons/cat/idx2clus.json"
         with open(cat_clus_path) as f:
             idx2clus = json.load(f)
         # each question consists on N*4 edges to predict
@@ -316,4 +316,3 @@ class DataLoaderPolyvore(Dataloader):
             comp_file = self.path_dataset + 'compatibility_RESAMPLED_test.json'
         with open(comp_file) as f:
             self.comp_outfits = json.load(f)
-
