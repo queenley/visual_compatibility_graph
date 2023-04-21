@@ -4,6 +4,7 @@ import json
 import time
 import os
 
+from src.utils import Graph
 from .Dataloader import Dataloader
 
 class DataLoaderPolyvore(Dataloader):
