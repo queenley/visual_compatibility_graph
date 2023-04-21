@@ -1,1 +1,1 @@
-from CompatibilityGAE import CompatibilityGAE
+from src.models.gnn.CompatibilityGAE import CompatibilityGAE
