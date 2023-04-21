@@ -4,6 +4,7 @@ import json
 import time
 import os
 
+from src.utils import Graph
 from .Dataloader import Dataloader
 
 class DataLoaderPolyvore(Dataloader):
@@ -42,23 +43,28 @@ class DataLoaderPolyvore(Dataloader):
 
         lower_adj = getattr(self, 'lower_{}_adj'.format(phase))
         # get the positive edges
+
+        # get the positive edges
+
         pos_r_idx, pos_c_idx = lower_adj.nonzero()
         pos_labels = np.array(lower_adj[pos_r_idx, pos_c_idx]).squeeze()
 
         # split the positive edges into the ones used for evaluation and the ones used as message passing
-        n_pos = pos_labels.shape[0] # number of positive edges
+        n_pos = pos_labels.shape[0]  # number of positive edges
         perm = list(range(n_pos))
         np.random.shuffle(perm)
         pos_labels, pos_r_idx, pos_c_idx = pos_labels[perm], pos_r_idx[perm], pos_c_idx[perm]
-        n_eval = int(n_pos/2)
+        n_eval = int(n_pos / 2)
         mp_pos_labels, mp_pos_r_idx, mp_pos_c_idx = pos_labels[n_eval:], pos_r_idx[n_eval:], pos_c_idx[n_eval:]
         # this are the positive examples that will be used to compute the loss function
         eval_pos_labels, eval_pos_r_idx, eval_pos_c_idx = pos_labels[:n_eval], pos_r_idx[:n_eval], pos_c_idx[:n_eval]
 
         # get the negative edges
+
         print('Sampling negative edges...')
         before = time.time()
-        n_train_neg = eval_pos_labels.shape[0] # set the number of negative training edges that will be needed to sample at each iter
+        n_train_neg = eval_pos_labels.shape[0]  # set the number of negative training edges
+        # that will be needed to # sample at each iter
         neg_labels = np.zeros(n_train_neg)
         # get the possible indexes to be sampled (basically all indexes if there aren't restrictions)
         poss_nodes = np.arange(lower_adj.shape[0])
@@ -74,11 +80,11 @@ class DataLoaderPolyvore(Dataloader):
 
         # build adj matrix
         adj = sp.csr_matrix((
-                    np.hstack([mp_pos_labels, mp_pos_labels]),
-                    (np.hstack([mp_pos_r_idx, mp_pos_c_idx]), np.hstack([mp_pos_c_idx, mp_pos_r_idx]))
-                ),
-                shape=(lower_adj.shape[0], lower_adj.shape[0])
-            )
+            np.hstack([mp_pos_labels, mp_pos_labels]),
+            (np.hstack([mp_pos_r_idx, mp_pos_c_idx]), np.hstack([mp_pos_c_idx, mp_pos_r_idx]))
+        ),
+            shape=(lower_adj.shape[0], lower_adj.shape[0])
+        )
         # remove the labels of the negative edges which are 0
         adj.eliminate_zeros()
 
@@ -96,17 +102,17 @@ class DataLoaderPolyvore(Dataloader):
         # self.questions is a list of questions with N elements and 4 possible choices (answers)
         flat_questions = []
         gt = []
-        q_ids = [] # this list indicates to which question does each edge belongs to
+        q_ids = []  # this list indicates to which question does each edge belongs to
         valid = []
         q_id = 0
         questions = self.questions if not resampled else self.questions_resampled
         for question in questions:
-            for index in question[0]: # indexes of outfit nodes
+            for index in question[0]:  # indexes of outfit nodes
                 i = 0
-                for index_answer in question[1]: # indexes of possible choices answers
-                    flat_questions.append([index, index_answer]) # append the edge
+                for index_answer in question[1]:  # indexes of possible choices answers
+                    flat_questions.append([index, index_answer])  # append the edge
                     if i == 0:
-                        gt.append(1) # the correct connection is the first
+                        gt.append(1)  # the correct connection is the first
                     else:
                         gt.append(0)
                     # a link is valid if the candidate item is from the same category as the missing item
@@ -116,7 +122,7 @@ class DataLoaderPolyvore(Dataloader):
             q_id += 1
 
         assert len(flat_questions) == len(gt) and len(q_ids) == len(gt) and len(gt) == len(valid)
-        assert len(self.questions) == max(q_ids)+1
+        assert len(self.questions) == max(q_ids) + 1
 
         # flat questions contains edges [u,v]
         # gt contains the ground truth label for each edge
@@ -144,8 +150,8 @@ class DataLoaderPolyvore(Dataloader):
         count_edges = 0
         count_pos = 0
         for edge in flat_questions:
-            u,v = edge
-            if full_adj[u,v] > 0:
+            u, v = edge
+            if full_adj[u, v] > 0:
                 count_pos += 1
             count_edges += 1
         assert count_pos == 0
@@ -165,59 +171,69 @@ class DataLoaderPolyvore(Dataloader):
             K: number of edges to expand for each question node
             subset: if true, use only a subset of the outfit as the query, and
                     use the rest as links to the choices.
-            expand_outfit: the mode to expand_outfit
+
         Returns:
             yields questions
+            :param K: size of neighbourhood
+            :param resampled: the mode of resampled dataset
+            :param subset: the mode of subset dataset
+            :param expand_outfit:
         """
         assert K >= 0
-        from utils import Graph
 
         # each question consists on N*4 edges to predict
         # self.questions is a list of questions with N elements and 4 possible choices (answers)
         questions = self.questions if not resampled else self.questions_resampled
+        full_choices = []
+        for question in questions:
+            full_choices += question[1]
+        full_choices = list(set(full_choices))
         n_nodes = self.test_adj.shape[0]
         for question in questions:
             outfit_ids = []
             choices_ids = []
             gt = []
-            valid = []
             # keep only a subset of the outfit
             if subset:
                 outfit_subset = np.random.choice(question[0], 3, replace=False)
             else:
                 outfit_subset = question[0]
-            for index in outfit_subset: # indexes of outfit nodes
-                i = 0
-                for index_answer in question[1]: # indexes of possible choices answers
+            for index in outfit_subset:  # indexes of outfit nodes
+                #                 i = 0
+                for index_answer in full_choices:  # indexes of possible choices answers
+                    if index_answer in outfit_subset:
+                        continue
                     outfit_ids.append(index)
                     choices_ids.append(index_answer)
-                    gt.append(int(i==0))# the correct connection is the first
+                    gt_idx = question[1][0]
+                    gt.append(int(index_answer == gt_idx))  # the correct connection is the first
                     # a link is valid if the candidate item is from the same category as the missing item
-                    valid.append(int(question[2][i] == question[3]))
-                    i += 1
+            #                     valid.append(int(question[2][i] == question[3]))
+            #                     i += 1
 
             # question adj with only the outfit edges
             question_adj = sp.csr_matrix((n_nodes, n_nodes))
             question_adj = question_adj.tolil()
             if not expand_outfit:
-                for j,u in enumerate(outfit_subset[:-1]):
-                    for v in outfit_subset[j+1:]:
+                for j, u in enumerate(outfit_subset[:-1]):
+                    for v in outfit_subset[j + 1:]:
                         question_adj[u, v] = 1
                         question_adj[v, u] = 1
 
             if K > 0:
-                # the K edges that will be sampled from each not will not belong to the outfit, and should not be the query edges, so remove them
+                # the K edges that will be sampled from each not will not belong to the outfit, and should not be the
+                # query edges, so remove them
                 available_adj = self.test_adj.copy()
                 available_adj = available_adj.tolil()
-                for j,u in enumerate(question[0][:-1]):
-                    for v in question[0][j+1:]:
+                for j, u in enumerate(question[0][:-1]):
+                    for v in question[0][j + 1:]:
                         available_adj[u, v] = 0
                         available_adj[v, u] = 0
-                if expand_outfit: # activate intra-outfit edges
-                    for j,u in enumerate(outfit_subset[:-1]):
-                        for v in outfit_subset[j+1:]:
-                            available_adj[u,v] = 1
-                            available_adj[v,u] = 1
+                if expand_outfit:  # activate intra-outfit edges
+                    for j, u in enumerate(outfit_subset[:-1]):
+                        for v in outfit_subset[j + 1:]:
+                            available_adj[u, v] = 1
+                            available_adj[v, u] = 1
                 for u, v in zip(outfit_ids, choices_ids):
                     available_adj[u, v] = 0
                     available_adj[v, u] = 0
@@ -228,9 +244,9 @@ class DataLoaderPolyvore(Dataloader):
 
                 extra_edges = []
                 # now fill the adj matrix with the expanded edges for each node (only for the choices)
-                nodes_to_expand = choices_ids[:4]
+                nodes_to_expand = choices_ids
 
-                if expand_outfit: # expand the outfit items as well
+                if expand_outfit:  # expand the outfit items as well
                     nodes_to_expand.extend(outfit_subset)
 
                 for node in nodes_to_expand:
@@ -244,7 +260,7 @@ class DataLoaderPolyvore(Dataloader):
 
             question_adj = question_adj.tocsr()
 
-            yield question_adj, np.array(outfit_ids), np.array(choices_ids), np.array(gt), np.array(valid)
+            yield question_adj, np.array(outfit_ids), np.array(choices_ids), np.array(gt), question[0]
 
     def get_test_compatibility(self):
         """
@@ -259,7 +275,7 @@ class DataLoaderPolyvore(Dataloader):
         for outfit in self.comp_outfits:
             items = outfit[0]
             for i in range(len(items)):
-                for to_idx in items[i+1:]:
+                for to_idx in items[i + 1:]:
                     from_idx = items[i]
                     flat_questions.append([from_idx, to_idx])
                     gt.append(outfit[1])
@@ -267,7 +283,7 @@ class DataLoaderPolyvore(Dataloader):
             q_id += 1
 
         assert len(flat_questions) == len(gt) and len(q_ids) == len(gt)
-        assert len(self.comp_outfits) == max(q_ids)+1
+        assert len(self.comp_outfits) == max(q_ids) + 1
 
         flat_questions = np.array(flat_questions)
         gt = np.array(gt)
@@ -290,8 +306,8 @@ class DataLoaderPolyvore(Dataloader):
         count_edges = 0
         count_pos = 0
         for edge in flat_questions:
-            u,v = edge
-            if full_adj[u,v] > 0:
+            u, v = edge
+            if full_adj[u, v] > 0:
                 count_pos += 1
             count_edges += 1
         assert count_pos == 0
@@ -306,4 +322,3 @@ class DataLoaderPolyvore(Dataloader):
             comp_file = self.path_dataset + 'compatibility_RESAMPLED_test.json'
         with open(comp_file) as f:
             self.comp_outfits = json.load(f)
-            

@@ -63,7 +63,7 @@ Please checkout out to branch `dev.full`, and run:
 ```shell
 python src/visualization/vis_out.py --load_from <path_of_model> --result <path_of_result>
 ```
-You can see the result I run [here](https://drive.google.com/drive/folders/1f5OXl8zjFqCO56W_g2BaRPgh8RiAl6Jp?usp=sharing)
+You can see the result I run [here](https://drive.google.com/drive/folders/1f6tzgAd3KxoquDPMSHk3VtAilvY0cg9m?usp=sharing)
 ### For our experiment 5, write the result with the full dataset for possible item choices (filter category)
 Please checkout out to branch `dev.cat`, and run:
 ```shell

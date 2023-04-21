@@ -11,7 +11,7 @@ import numpy as np
 
 
 def resample_compatibility():
-    data_path = '../../../../data/polyvore/jsons'
+    data_path = '../../../../data/polyvore/jsons/'
     orig_file = os.path.join(data_path, 'fashion_compatibility_prediction.txt')
     dest_file = os.path.join(data_path, 'fashion_compatibility_prediction_RESAMPLED.txt')
 

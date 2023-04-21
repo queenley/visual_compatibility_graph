@@ -179,9 +179,6 @@ def test_compatibility(_args):
             pred = sess.run(prob_act(model.outputs), feed_dict=new_feed_dict)
 
             predicted_score = pred.mean()
-            #             print("[{}] Mean scores between outfit: {:.4f}, label: {}".format(count, predicted_score, score))
-            # TODO: remove this print
-            #             print("Total Elapsed: {:.4f}".format(time.time() - before_item))
             count += 1
 
             preds.append(predicted_score)

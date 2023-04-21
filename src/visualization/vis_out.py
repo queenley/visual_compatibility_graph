@@ -10,6 +10,8 @@ from skimage.color import gray2rgb, rgba2rgb
 import skimage.io
 from collections import namedtuple
 import os
+import sys
+sys.path.append("./")
 from tqdm import tqdm
 
 import tensorflow.compat.v1 as tf
@@ -29,10 +31,10 @@ def test_fitb(_args):
     with open(config_file) as f:
         config = json.load(f)
 
-    with open('data/polyvore/dataset/id2idx_test.json') as f:
+    with open('src/data/polyvore/dataset/id2idx_test.json') as f:
         id2idx_test = json.load(f)
 
-    with open('data/polyvore/dataset/id2their_test.json') as f:
+    with open('src/data/polyvore/dataset/id2their_test.json') as f:
         id2their_test = json.load(f)
 
     NUMCLASSES = 2
@@ -79,7 +81,6 @@ def test_fitb(_args):
                              num_support=num_support,
                              hidden=config['hidden'],
                              learning_rate=config['learning_rate'],
-                             logging=True,
                              batch_norm=config['batch_norm'])
 
     # Add ops to save and restore all the variables.

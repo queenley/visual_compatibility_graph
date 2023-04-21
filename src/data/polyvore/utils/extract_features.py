@@ -17,6 +17,8 @@ import pickle as pkl
 import json
 from sentence_transformers import SentenceTransformer
 import numpy as np
+import sys
+sys.path.append("./")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--phase', default='train', choices=['train', 'test', 'valid'])
