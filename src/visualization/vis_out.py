@@ -134,7 +134,10 @@ def test_fitb(_args):
             # compute the output (correct or not) for the current FITB question
             preds = sess.run(model.outputs, feed_dict=q_feed_dict)
             preds = sigmoid(preds)
-            outs = preds.reshape((-1, shape_choices))
+            try:
+                outs = preds.reshape((-1, shape_choices))
+            except:
+                continue
             outs = outs.mean(axis=0)  # pick the item with average largest probability, averaged accross all edges
 
             gt = labels.reshape((-1, shape_choices)).mean(axis=0)
