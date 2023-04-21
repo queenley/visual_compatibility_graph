@@ -1,80 +1,152 @@
 """
-Resample the FITB choices so that they share category with the correct item.
+Create the dataset files for Polyvore from the raw data.
 """
 
+import os
 import json
-from random import shuffle
-import random
+import scipy as sp
+from scipy.sparse import lil_matrix, save_npz, csr_matrix
+import argparse
+import pickle as pkl
+import numpy as np
+from get_questions import get_questions
+from get_compatibility import get_compats
+from resample_fitb import resample_fitb
+from resample_compat import resample_compatibility
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--phase', default='train', choices=['train', 'valid', 'test'])
+args = parser.parse_args()
 
-def resample_fitb():
-    dataset_path = '../../../../data/polyvore/jsons'
-    questions_file = dataset_path + 'fill_in_blank_test.json'
-    json_file = dataset_path + '{}_no_dup.json'.format('test')
-    questions_file_resampled = dataset_path + 'fill_in_blank_test_RESAMPLED.json'
+save_path = '../dataset/'
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
+    
+dataset_path = '../../../../data/polyvore/jsons/'
+json_file = dataset_path + '{}_no_dup.json'.format(args.phase)
+train_file = dataset_path + 'train_no_dup.json'
+valid_file = dataset_path + 'valid_no_dup.json'
+test_file = dataset_path + 'test_no_dup.json'
+with open(json_file) as f:
+    json_data = json.load(f)    
 
-    with open(json_file) as f:
-        json_data = json.load(f)
+# load the features extracted with 'extract_features.py'
+feat_pkl = os.path.join(save_path, 'imgs_featdict_{}.pkl'.format(args.phase))
+if os.path.exists(feat_pkl):
+    with open(feat_pkl, 'rb') as handle:
+        feat_dict = pkl.load(handle)
+else:
+    raise FileNotFound('The extracted features file {} does not exist'.format(feat_pkl))
 
-    with open(questions_file) as f:
-        questions_data = json.load(f)
+relations = {}
+id2idx = {}
+idx = 0
+features = []
 
-    questions_resampled = []
+# map an image id to their ids with format 'OUTFIT-ID_INDEX'
+map_id2their = {}
 
-    print('There are {} questions.'.format(len(questions_data)))
-    print('There are {} test outfits.'.format(len(json_data)))
+for outfit in json_data:
+    outfit_ids = set()
+    for item in outfit['items']:
+        # get id from the image url
+        _, id = item['image'].split('id=')
+        id = int(id)
+        outfit_ids.add(id)
+        #cat_dict[id] = item['categoryid']
+        map_id2their[id] = '{}_{}'.format(outfit['set_id'], item['index'])
+    for id in outfit_ids:
+        try:
+            if id not in relations:
+                relations[id] = set()
+                img_feats = feat_dict[str(id)] 
+                # TODO, REMOVE
+                #cat_vector = cat_vectors[cat_dict[id]]
+                #feats = np.concatenate((cat_vector, img_feats))
+                features.append(img_feats)
+                # map this id to a sequential index
+                id2idx[id] = idx
+                idx += 1
 
-    # map ids in the form 'outfit_index' to 'imgID', because in 'fill_in_blank_test.json'
-    # the ids are in format outfit_index, but I use the other ID (so that the same item in two outfits has the same id)
-    map_ids = {}
-    map_cat = {}
-    for outfit in json_data:
-        for item in outfit['items']:
-            outfit_id = '{}_{}'.format(outfit['set_id'], str(item['index']))
-            # get id from the image url
-            _, id = item['image'].split('id=')
-            map_ids[outfit_id] = id
-            map_cat[outfit_id] = item['categoryid']
+            relations[id].update(outfit_ids)
+            relations[id].remove(id)
+        except:
+            print(id) 
 
-    not_enough = 0
-    for ques in questions_data:
-        new_ques = {'blank_position': ques['blank_position']}
-        q = []
-        outfit_id = None
-        for q_id in ques['question']:
-            outfit_id = q_id.split('_')[0]
-            q.append(q_id)
-        new_ques['question'] = q
+map_file = save_path + 'id2idx_{}.json'.format(args.phase)
+with open(map_file, 'w') as f:
+    json.dump(id2idx, f)
+map_file = save_path + 'id2their_{}.json'.format(args.phase)
+with open(map_file, 'w') as f:
+    json.dump(map_id2their, f)
 
-        a = []
-        i = 0
-        choices = None
-        for a_id in ques['answers']:
-            if i == 0:
-                # correct choice
-                assert a_id.split('_')[0] == outfit_id
-                catid = map_cat[a_id]
-                choices = set([out_id for out_id in map_cat if map_cat[out_id] == catid]) - {a_id} - set(q)
-                choices = list(choices)
-                shuffle(choices)
-            else:  # resample item that has the category 'catid' (which is the same as the missing item)
-                # it could happen that there aren't enough items of that category
-                if i-1 < len(choices):
-                    a_id = choices[i-1]
-                else:
-                    # not enough possible choices with the same cat
-                    a_id = random.choice(list(map_cat.keys()))
-                    not_enough += 1
+# create sparse matrix that will represent the adj matrix
+sp_adj = lil_matrix((idx, idx))
+features_mat = np.zeros((idx, 2816))
+print('Filling the values of the sparse adj matrix')
+for rel in relations:
+    try:
+        rel_list = relations[rel]
+        from_idx = id2idx[rel]
+        features_mat[from_idx] = features[from_idx]
 
-            a.append(a_id)
-            i += 1
-        new_ques['answers'] = a
+        for related in rel_list:        
+            to_idx = id2idx[related]
 
-        questions_resampled.append(new_ques)
+            sp_adj[from_idx, to_idx] = 1
+            sp_adj[to_idx, from_idx] = 1 # because it is symmetric
+    except:
+        continue
 
-    print(not_enough)
+print('Done!')
 
-    with open(questions_file_resampled, 'w') as f:
-        json.dump(questions_resampled, f)
+density = sp_adj.sum() / (sp_adj.shape[0] * sp_adj.shape[1])
+print('Sparse density: {}'.format(density))
 
-    print('Saved!')
+# now save the adj matrix
+save_adj_file = save_path + 'adj_{}.npz'.format(args.phase)
+sp_adj = sp_adj.tocsr()
+save_npz(save_adj_file, sp_adj)
+
+save_feat_file = save_path + 'features_{}'.format(args.phase)
+sp_feat = csr_matrix(features_mat)
+save_npz(save_feat_file, sp_feat)
+
+def create_test(resampled=False):
+    if resampled:
+        resample_fitb()
+        resample_compatibility()
+
+    # build the question indexes
+    questions = get_questions(resampled=resampled)
+    for i in range(len(questions)): # for each question
+        assert len(questions[i]) == 4
+        for j in range(2): # questions list (j==0) or answers list (j==1)
+            for z in range(len(questions[i][j])): # for each id in the list
+                id = int(questions[i][j][z])
+                questions[i][j][z] = id2idx[id] # map the id to the node index
+
+    questions_file = save_path + 'questions_{}.json'.format(args.phase)
+    if resampled:
+        questions_file = questions_file.replace('questions', 'questions_RESAMPLED')
+    with open(questions_file, 'w') as f:
+        json.dump(questions, f)
+
+    # outfit compat task
+    outfits = get_compats(resampled=resampled)
+    for i in range(len(outfits)): # for each outfit
+        for j in range(len(outfits[i][0])):
+            id = int(outfits[i][0][j])
+            outfits[i][0][j] = id2idx[id]
+
+    compat_file = save_path + 'compatibility_{}.json'.format(args.phase)
+    if resampled:
+        compat_file = compat_file.replace('compatibility', 'compatibility_RESAMPLED')
+    print(compat_file)
+    with open(compat_file, 'w') as f:
+        json.dump(outfits, f)
+
+if args.phase == 'test':
+    create_test(False)
+    create_test(True)
+    

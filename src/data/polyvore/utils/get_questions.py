@@ -2,7 +2,7 @@ import json
 
 
 def get_questions(resampled=False):
-    dataset_path = '../../../../data/polyvore/jsons'
+    dataset_path = '../../../../data/polyvore/jsons/'
     if resampled:
         questions_file = dataset_path + 'fill_in_blank_test_RESAMPLED.json'
     else:

@@ -316,3 +316,4 @@ class DataLoaderPolyvore(Dataloader):
             comp_file = self.path_dataset + 'compatibility_RESAMPLED_test.json'
         with open(comp_file) as f:
             self.comp_outfits = json.load(f)
+
