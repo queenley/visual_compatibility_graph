@@ -21,7 +21,7 @@ mkdir data/polyvore
 mkdir src/data/polyvore/dataset
 ```
 ### Download [Polyvore dataset](https://github.com/xthan/polyvore-dataset):
-Please download full dataset in this [link](https://drive.google.com/drive/folders/1splSxGhduNFZXLb518BusnEwqphyABeK?usp=sharing)
+Please download full dataset in this [link](https://drive.google.com/file/d/1fkIa2BIrikJCgfy5LKDs_1jm-nFPJPof/view?usp=sharing)
 
 The dataset after downloaded have to pushed in `data/polyvore` 
 
@@ -63,7 +63,7 @@ Please checkout out to branch `dev.full`, and run:
 ```shell
 python src/visualization/vis_out.py --load_from <path_of_model> --result <path_of_result>
 ```
-You can see the result I run [here](https://drive.google.com/file/d/1fkIa2BIrikJCgfy5LKDs_1jm-nFPJPof/view?usp=sharing)
+You can see the result I run [here](https://drive.google.com/file/d/1-EaZtqAvC16Bwm7AklWqQ86knmIZ4mC1/view?usp=sharing)
 ### For our experiment 5, write the result with the full dataset for possible item choices (filter category)
 Please checkout out to branch `dev.cat`, and run:
 ```shell
